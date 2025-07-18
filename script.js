@@ -1,100 +1,88 @@
-// Tableau pour stocker les livres
-let bibliotheque = [];
+let librairie = []
 
-// Fonction pour ajouter un livre
-function ajouterLivre() {
-  const titre = document.getElementById('title').value;
-  const auteur = document.getElementById('author').value;
-  const annee = parseInt(document.getElementById('year').value);
+function add(book) {
+  librairie.push(book)
+}
 
-  if (!titre || !auteur || isNaN(annee)) {
-    afficher("Veuillez remplir tous les champs.");
-    return;
+function getAvailableBooks()     {
+    for (let i=0; i<librairie.length; i++) {
+        const book = librairie[i]
+        if (book.borrowed === false) {
+            console.log(book)
+        }
+    }
+}
+librairie.forEach(book => {
+    if (book.borrowed === false) {
+        console.log(book)
+    }
+})
+
+function searchByTitle(title)
+{
+for (let i=0; i<librairie.length; i++) {
+    const book = librairie [i]
+        if (book.title.toLowerCase().trim() == title.toLowerCase().trim()){
+            return book;
+        }
+    }
+}
+
+function borrowedBook(title) {
+  const book = searchByTitle(title);
+  if (book && book.borrowed === false) {
+      book.borrowed = true;
+      console.log(`${book.title} peut être emprunté, tu disposes de 14 jours pour le rendre`);
+  } else if (book) {
+      console.log(`${book.title} est déjà emprunté`);
+  } else {
+      console.log(`Ce livre n'existe pas`)
+  }
   }
 
-  const livre = {
-    title: titre,
-    author: auteur,
-    publicationYear: annee,
+function returnbooks(title) {
+  const book = searchByTitle(title)
+  if (book && book.borrowed === true) {
+      book.borrowed = false;
+    console.log(`Votre retour est pris en compte pour ${book.title}`);
+  }else if (book) {
+    console.log(`${book.title} ne peut pas être rendu car il n'a pas été emprunté`);
+  }else {
+    console.log(`Nous ne possédons pas ce livre`)
+  }
+}
+
+
+
+add({
+    title: 'Le Hobbit',
+    author: 'JRR Tolkien',
+    publicationYear: 1937,
     borrowed: false
-  };
+    })
+add({
+    title: 'Neuromancier',
+    author: 'William Gibson',
+    publicationYear: 1984,
+    borrowed: true
+    })
+add({
+    title: 'Les furtifs',
+    author: 'William Gibson',
+    publicationYear: 1984,
+    borrowed: false
+    })
+  console.log("add")
 
-  bibliotheque.push(livre);
-  afficher(`Livre ajouté : ${titre} par ${auteur} (${annee})`);
-}
+console.log ('Nos livres disponibles sont :')
+getAvailableBooks()
 
-// Fonction pour afficher les livres disponibles
-function listerLivresDisponibles() {
-  const disponibles = bibliotheque.filter(livre => !livre.borrowed);
-  if (disponibles.length === 0) {
-    afficher("Aucun livre disponible.");
-  } else {
-    afficher("Livres disponibles :");
-    disponibles.forEach(l => afficher(`- ${l.title} par ${l.author} (${l.publicationYear})`));
-  }
-}
+console.log('Le livre que vous recherchez est ')
 
-// Fonction pour chercher un livre par titre
-function chercherParTitre() {
-  const titre = document.getElementById('searchTitle').value.trim();
-  const livre = bibliotheque.find(l => l.title.toLowerCase() === titre.toLowerCase());
-  if (livre) {
-    afficher(`Trouvé : ${livre.title} (${livre.borrowed ? "emprunté" : "disponible"})`);
-  } else {
-    afficher("Livre non trouvé.");
-  }
-}
+console.log(searchByTitle('Le hobbit'))
 
-// Fonction pour emprunter un livre
-function emprunterLivre(titre) {
-  const livre = bibliotheque.find(l => l.title.toLowerCase() === titre.toLowerCase());
-  if (livre) {
-    if (livre.borrowed) {
-      afficher("Le livre est déjà emprunté.");
-    } else {
-      livre.borrowed = true;
-      afficher(`Vous avez emprunté "${livre.title}".`);
-    }
-  } else {
-    afficher("Livre non trouvé.");
-  }
-}
+borrowedBook("Neuromancier")
+returnbooks ("Le Hobbit")
 
-// Fonction pour retourner un livre
-function retournerLivre(titre) {
-  const livre = bibliotheque.find(l => l.title.toLowerCase() === titre.toLowerCase());
-  if (livre) {
-    if (!livre.borrowed) {
-      afficher("Le livre est déjà retourné.");
-    } else {
-      livre.borrowed = false;
-      afficher(`Vous avez retourné "${livre.title}".`);
-    }
-  } else {
-    afficher("Livre non trouvé.");
-  }
-}
 
-// BONUS : recherche avancée
-function rechercheAvancee() {
-  const auteur = document.getElementById('searchAuthor').value.trim().toLowerCase();
-  const annee = parseInt(document.getElementById('searchYear').value);
 
-  const resultats = bibliotheque.filter(l =>
-    (auteur ? l.author.toLowerCase().includes(auteur) : true) &&
-    (!isNaN(annee) ? l.publicationYear === annee : true)
-  );
-
-  if (resultats.length === 0) {
-    afficher("Aucun livre correspondant.");
-  } else {
-    afficher("Résultats de la recherche :");
-    resultats.forEach(l => afficher(`- ${l.title} par ${l.author} (${l.publicationYear})`));
-  }
-}
-
-// Fonction utilitaire pour afficher dans la console de la page
-function afficher(message) {
-  const output = document.getElementById("output");
-  output.textContent += message + "\n";
-}
