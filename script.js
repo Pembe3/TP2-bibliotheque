@@ -81,8 +81,10 @@ console.log('Le livre que vous recherchez est ')
 
 console.log(searchByTitle('Le hobbit'))
 
+console.table(librairie);
+
 borrowedBook("Neuromancier")
 returnbooks ("Le Hobbit")
 
-
+console.table(librairie);
 
